@@ -72,7 +72,7 @@ export default function IndexPage() {
     <section className="grid h-screen grid-flow-col xl:grid-cols-2">
       <div className="hidden place-content-center bg-gray-200 dark:bg-slate-950 xl:grid">
         <Button asChild>
-          <Link href="/reg" className="w-60 bg-gray-500 text-white">
+          <Link href="/reg" className="w-60 bg-gray-400">
             Зарегистрироваться
           </Link>
         </Button>
@@ -127,7 +127,6 @@ export default function IndexPage() {
           <Button className="mt-2 w-full xl:mt-6">Продолжить</Button>
         </div>
       </div>
-
     </section>
   )
 }

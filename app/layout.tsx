@@ -1,4 +1,5 @@
 import "@/styles/globals.css"
+
 import { Metadata } from "next"
 
 import { siteConfig } from "@/config/site"
@@ -9,6 +10,7 @@ import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
 
 export const metadata: Metadata = {
+  applicationName: siteConfig.name,
   title: {
     default: siteConfig.name,
     template: `%s - ${siteConfig.name}`,
@@ -23,6 +25,33 @@ export const metadata: Metadata = {
     shortcut: "/favicon-16x16.png",
     apple: "/apple-touch-icon.png",
   },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: siteConfig.name,
+    // startUpImage: [],
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  // openGraph: {
+  //   type: "website",
+  //   siteName: siteConfig.name,
+  //   title: {
+  //     default: siteConfig.name,
+  //     template: `%s - ${siteConfig.name}`,
+  //   },
+  //   description: siteConfig.description,
+  // },
+  // twitter: {
+  //   card: "summary",
+  //   title: {
+  //     default: siteConfig.name,
+  //     template: `%s - ${siteConfig.name}`,
+  //   },
+  //   description: siteConfig.description,
+  // },
 }
 
 interface RootLayoutProps {
