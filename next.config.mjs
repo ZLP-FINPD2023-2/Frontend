@@ -6,6 +6,16 @@ import {
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Note: We are adding the node-loader here
+    config.module.rules.push({
+      test: /\.node$/,
+      loader: "node-loader",
+    })
+
+    return config
+  },
 }
 
 const nextConfigFunction = async (phase) => {

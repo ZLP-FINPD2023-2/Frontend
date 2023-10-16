@@ -226,8 +226,8 @@ export default function IndexPage() {
         </div>
       </div>
       <div className="hidden place-content-center bg-gray-200 dark:bg-slate-950 xl:grid">
-        <Button asChild>
-          <Link href="/auth" className="w-60 bg-gray-400">
+        <Button variant="secondary" asChild>
+          <Link href="/auth" className="w-60">
             Войти
           </Link>
         </Button>

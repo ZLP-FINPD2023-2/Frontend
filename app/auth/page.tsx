@@ -69,10 +69,10 @@ export default function IndexPage() {
     })
   }
   return (
-    <section className="grid h-screen grid-flow-col xl:grid-cols-2">
+    <section className="grid h-[90vh] grid-flow-col xl:grid-cols-2">
       <div className="hidden place-content-center bg-gray-200 dark:bg-slate-950 xl:grid">
-        <Button asChild>
-          <Link href="/reg" className="w-60 bg-gray-400">
+        <Button variant="secondary" asChild>
+          <Link href="/reg" className="w-60">
             Зарегистрироваться
           </Link>
         </Button>
