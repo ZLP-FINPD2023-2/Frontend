@@ -1,6 +1,7 @@
 {
   "name": "Finapp",
   "short_name": "Finapp",
+  "description": "Finapp is cool",
   "lang": "ru-RU",
   "icons": [
     {
@@ -13,6 +14,26 @@
       "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./screens/desktop.jpg",
+      "type": "image/jpeg",
+      "sizes": "1440*900",
+      "form_factor": "wide"
+    },
+    {
+      "src": "./screens/desktop2.jpg",
+      "type": "image/jpeg",
+      "sizes": "1440*900",
+      "form_factor": "wide"
+    },
+    {
+      "src": "./screens/mobile.jpg",
+      "type": "image/jpeg",
+      "sizes": "530x700",
+      "form_factor": "narrow"
     }
   ],
   "theme_color": "green",
