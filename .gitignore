@@ -16,8 +16,7 @@ build
 # next-pwa
 sw.js
 sw.js.map
-workbox-*.js
-workbox-*.js.map
+workbox-*
 
 # misc
 .DS_Store
