@@ -3,76 +3,22 @@
 import * as React from "react"
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { format } from "date-fns"
-import { ru } from "date-fns/locale"
-import { CalendarIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
-import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { toast } from "@/components/ui/use-toast"
-
-const FormSchema = z.object({
-  dob: z.date({
-    required_error: "A date of birth is required.",
-  }),
-})
 
 export default function IndexPage() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-  })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
-  }
   return (
     <section className="grid h-[90vh] grid-flow-col xl:grid-cols-2">
       <div className="hidden place-content-center bg-gray-200 dark:bg-slate-950 xl:grid">
         <Button variant="secondary" asChild>
-          <Link href="/reg" className="w-60">
+          <Link href="/auth//reg" className="w-60">
             Зарегистрироваться
           </Link>
         </Button>
@@ -108,7 +54,7 @@ export default function IndexPage() {
                           placeholder="Введите пароль"
                           autoComplete="password"
                         />
-                        <Link href={""} className="text-sm text-gray-500">
+                        <Link href="/auth/forgot" className="text-sm text-gray-500">
                           Забыли пароль?
                         </Link>
                       </div>
@@ -120,8 +66,8 @@ export default function IndexPage() {
           </Card>
           <p className="mt-2 text-sm text-gray-500 xl:hidden">
             Нет аккаунта?{" "}
-            <Link href="/reg" className="font-bold">
-            Зарегистрироваться
+            <Link href="/auth/reg" className="font-bold">
+              Зарегистрироваться
             </Link>
           </p>
           <Button className="mt-2 w-full xl:mt-6">Продолжить</Button>

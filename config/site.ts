@@ -6,8 +6,8 @@ export const siteConfig = {
     "Beautifully designed components built with Radix UI and Tailwind CSS.",
   mainNav: [
     {
-      title: "Auth",
-      href: "/auth",
+      title: "Login",
+      href: "/auth/login",
     },
   ],
   links: {
