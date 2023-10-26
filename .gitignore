@@ -13,6 +13,11 @@ coverage
 out/
 build
 
+# next-pwa
+sw.js
+sw.js.map
+workbox-*
+
 # misc
 .DS_Store
 *.pem
