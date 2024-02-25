@@ -3,11 +3,15 @@ export type SiteConfig = typeof siteConfig
 export const siteConfig = {
   name: "Finapp",
   description:
-    "Beautifully designed components built with Radix UI and Tailwind CSS.",
+    "Финансовое приложение",
   mainNav: [
     {
-      title: "Login",
+      title: "Войти",
       href: "/auth/login",
+    },
+    {
+      title: "Транзакции",
+      href: "/transactions",
     },
   ],
   links: {
