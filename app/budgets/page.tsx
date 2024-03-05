@@ -48,17 +48,17 @@ export default function Budgets() {
               <DialogTitle>Новый бюджет</DialogTitle>
             </DialogHeader>
               <Label htmlFor="name">Название</Label>
-              <Input id="name" type="text" />
+              <Input id="name" type="text" placeholder="Введите название" />
               <Label htmlFor="goal">Цель</Label>
-              <Input id="goal" type="text" />
+              <Input id="goal" type="text" placeholder="Введите цель"  />
               <Label htmlFor="amount">Сумма</Label>
-              <Input id="amount" type="text" />
+              <Input id="amount" type="text" placeholder="Введите сумма" />
                 <Label htmlFor="instrument">
                   Фин.инструменты
                 </Label>
                 <Select>
                   <SelectTrigger>
-                    <SelectValue placeholder="" />
+                    <SelectValue placeholder="выберете инструмент" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="light">Ракета</SelectItem>
@@ -67,7 +67,7 @@ export default function Budgets() {
                   </SelectContent>
                 </Select>
               <Label htmlFor="description">Описание</Label>
-              <Input id="description" type="text" />
+              <Input id="description" type="text" placeholder="Введите описание" />
               <Button variant="default" className="mt-4 w-full">Сохранить</Button>
           </DialogContent>
         </Dialog>
