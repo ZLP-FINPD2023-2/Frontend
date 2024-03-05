@@ -1,7 +1,19 @@
+"use client"
 import { Pencil, Trash2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
 import {
   Table,
   TableBody,
@@ -11,6 +23,15 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 export default function Budgets() {
   return (
     <div className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
@@ -18,45 +39,38 @@ export default function Budgets() {
         <h1 className="text-2xl font-semibold">
           Бюджеты
         </h1>
-        <Button variant="default">
-          Добавить
-        </Button>
-          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-            <div className="bg-white p-6 rounded-md">
-              <h2 className="text-xl font-semibold mb-4">Новый бюджет</h2>
-              <form>
-                <div className="mb-4">
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">Название</label>
-                  <input type="text" id="name" className="mt-1 p-2 border rounded-md w-full" />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">Цель</label>
-                  <input type="text" id="name" className="mt-1 p-2 border rounded-md w-full" />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">Сумма</label>
-                  <input type="text" id="name" className="mt-1 p-2 border rounded-md w-full" />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">Фин.инструменты</label>
-                  <select
-                      id="instrument"
-                      className="mt-1 p-2 border rounded-md w-full"
-                    >
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                    </select>
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">Описание</label>
-                  <input type="text" id="name" className="mt-1 p-2 border rounded-md w-full" />
-                </div>
-                <div className="flex justify-end">
-                  <Button variant="default">Сохранить</Button>
-                </div>
-              </form>
-            </div>
-          </div>
+        <Dialog>
+          <DialogTrigger>
+            <Button variant="default">Добавить</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Новый бюджет</DialogTitle>
+            </DialogHeader>
+              <Label htmlFor="name">Название</Label>
+              <Input id="name" type="text" />
+              <Label htmlFor="goal">Цель</Label>
+              <Input id="goal" type="text" />
+              <Label htmlFor="amount">Сумма</Label>
+              <Input id="amount" type="text" />
+                <Label htmlFor="instrument">
+                  Фин.инструменты
+                </Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="light">Ракета</SelectItem>
+                    <SelectItem value="dark">Крипта</SelectItem>
+                    <SelectItem value="system">Темки</SelectItem>
+                  </SelectContent>
+                </Select>
+              <Label htmlFor="description">Описание</Label>
+              <Input id="description" type="text" />
+              <Button variant="default" className="mt-4 w-full">Сохранить</Button>
+          </DialogContent>
+        </Dialog>
       </div>
       <Card className="h-screen rounded-3xl p-6 overflow-x-auto">
         <Table className="min-w-full">
