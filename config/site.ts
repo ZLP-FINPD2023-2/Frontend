@@ -13,6 +13,10 @@ export const siteConfig = {
       title: "Транзакции",
       href: "/transactions",
     },
+    {
+      title: "Бюджеты",
+      href: "/budgets",
+    },
   ],
   links: {
     twitter: "https://twitter.com/",

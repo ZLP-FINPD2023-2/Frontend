@@ -133,7 +133,7 @@ const invoices = [
 ]
 
 const categories = income.map((item) => item.name)
-const valueFormatter = (number) =>
+const valueFormatter = (number: number) =>
   `₽ ${new Intl.NumberFormat("us").format(number).toString()}`
 export default function IndexPage() {
   return (
