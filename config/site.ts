@@ -17,6 +17,10 @@ export const siteConfig = {
       title: "Бюджеты",
       href: "/budgets",
     },
+    {
+      title: "Фин. инструменты",
+      href: "/fin_tools",
+    },
   ],
   links: {
     twitter: "https://twitter.com/",
