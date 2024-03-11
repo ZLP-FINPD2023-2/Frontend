@@ -58,17 +58,19 @@ import { ru } from "date-fns/locale"
 import { CalendarIcon } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { cn } from "@/lib/utils"
+import InputDate from "@/components/input-date"
 
 const FormSchema = z.object({
-  dob: z.date({
+  start: z.date({
+    required_error: "A date of birth is required.",
+  }),
+  end: z.date({
     required_error: "A date of birth is required.",
   }),
 })
 
 export default function Fin_tools() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-  })
+  const form = useForm()
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     toast({
@@ -86,6 +88,7 @@ export default function Fin_tools() {
         <h1 className="text-2xl font-semibold">
           Финансовые инструменты
         </h1>
+        <Form {...form}>
         <Dialog>
           <DialogTrigger>
             <Button variant="default">Добавить</Button>
@@ -100,8 +103,8 @@ export default function Fin_tools() {
                     <SelectValue placeholder="Выберете инструмент" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Вклад</SelectItem>
-                    <SelectItem value="dark">Облигация</SelectItem>
+                    <SelectItem value="deposit">Вклад</SelectItem>
+                    <SelectItem value="bond">Облигация</SelectItem>
                   </SelectContent>
               </Select>
               <Label htmlFor="period">Периодичность</Label>
@@ -110,117 +113,18 @@ export default function Fin_tools() {
                     <SelectValue placeholder="Выберете период" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Ежемесячно</SelectItem>
-                    <SelectItem value="dark">Ежегодно</SelectItem>
+                    <SelectItem value="month">Ежемесячно</SelectItem>
+                    <SelectItem value="year">Ежегодно</SelectItem>
                   </SelectContent>
               </Select>
               <Label htmlFor="coefficient">Коэффициент прибыли</Label>
               <Input id="coefficient" type="number" placeholder="1.15" />
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="basis-1/2"
-                >
-                  <FormField
-                    control={form.control}
-                    name="dob"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Дата начала</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "pl-3 text-left font-normal",
-                                  !field.value &&
-                                    "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "PPP", {
-                                    locale: ru,
-                                  })
-                                ) : (
-                                  <span>Укажите дату</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent
-                            className="w-auto p-0"
-                            align="start"
-                          >
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </form>
-              </Form>
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="basis-1/2"
-                >
-                  <FormField
-                    control={form.control}
-                    name="dob"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Дата конца</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "pl-3 text-left font-normal",
-                                  !field.value &&
-                                    "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "PPP", {
-                                    locale: ru,
-                                  })
-                                ) : (
-                                  <span>Укажите дату</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent
-                            className="w-auto p-0"
-                            align="start"
-                          >
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </form>
-              </Form>
+              <InputDate form={form} field="start"label="Дата начала"/>
+              <InputDate form={form} field="end"label="Дата конца"/>
               <Button variant="default" className="mt-4 w-full">Сохранить</Button>
           </DialogContent>
         </Dialog>
+      </Form>
       </div>
       <Card className="h-screen rounded-3xl p-6 overflow-x-auto">
         <Table className="min-w-full">
