@@ -10,6 +10,10 @@ export const siteConfig = {
       href: "/auth/login",
     },
     {
+      title: "Цели",
+      href: "/goals",
+    },
+    {
       title: "Транзакции",
       href: "/transactions",
     },

@@ -34,13 +34,6 @@ import {
 } from "@/components/ui/dialog"
 
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-
-
-import {
   Form,
   FormControl,
   FormDescription,
@@ -50,14 +43,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
-import { Calendar } from "@/components/ui/calendar"
-import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { format } from "date-fns"
-import { ru } from "date-fns/locale"
-import { CalendarIcon } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
-import { cn } from "@/lib/utils"
 import InputDate from "@/components/input-date"
 
 const FormSchema = z.object({
