@@ -58,7 +58,7 @@ export default function Budgets() {
                 </Label>
                 <Select>
                   <SelectTrigger>
-                    <SelectValue placeholder="выберете инструмент" />
+                    <SelectValue placeholder="выберите инструмент" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="light">Ракета</SelectItem>

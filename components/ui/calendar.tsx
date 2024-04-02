@@ -16,9 +16,9 @@ function Calendar({
 }: CalendarProps) {
   return (
     <DayPicker
-      // captionLayout="dropdown"
-      // fromYear={1923}
-      // toYear={2005}
+      captionLayout="dropdown"
+      fromYear={1924} 
+      toYear={2024}
       locale={ru}
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
