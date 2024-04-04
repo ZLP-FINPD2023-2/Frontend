@@ -32,6 +32,30 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
+const budgets = [
+  {
+    id: 1,
+    name: 'На компьютер',
+    cost: "100 000Р",
+    fin_tool: "Вклад",
+    goal: "Компьютер",
+  },
+  {
+    id: 2,
+    name: 'На машину',
+    cost: "1 000 000Р",
+    fin_tool: "Облигации",
+    goal: "Машина",
+  },
+  {
+    id: 3,
+    name: 'На дом',
+    cost: "400 000Р",
+    fin_tool: "Облигации",
+    goal: "Дом",
+  },
+]
+
 export default function Budgets() {
   return (
     <div className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
@@ -85,39 +109,22 @@ export default function Budgets() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>1</TableCell>
-              <TableCell>На компьютер</TableCell>
-              <TableCell>100 000Р</TableCell>
-              <TableCell>Вклад</TableCell>
-              <TableCell>Компьютер</TableCell>
-              <TableCell className="flex gap-3">
-                <Pencil className="h-5 w-5 hover:text-gray-700" />
-                <Trash2 className="h-5 w-5 hover:text-gray-700" />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>2</TableCell>
-              <TableCell>На машину</TableCell>
-              <TableCell>1 000 000Р</TableCell>
-              <TableCell>Облигации</TableCell>
-              <TableCell>Машина</TableCell>
-              <TableCell className="flex gap-3">
-                {/* <FileEditIcon className="mr-2 inline h-5 w-5 text-gray-500 hover:text-gray-700" />
-                <DeleteIcon className="inline h-5 w-5 text-gray-500 hover:text-gray-700" /> */}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>3</TableCell>
-              <TableCell>На дом</TableCell>
-              <TableCell>400 000Р</TableCell>
-              <TableCell>Облигации</TableCell>
-              <TableCell>Дом</TableCell>
-              <TableCell className="flex gap-3">
-                {/* <FileEditIcon className="mr-2 inline h-5 w-5 text-gray-500 hover:text-gray-700" />
-                <DeleteIcon className="inline h-5 w-5 text-gray-500 hover:text-gray-700" /> */}
-              </TableCell>
-            </TableRow>
+            {budgets.length > 0 ? budgets.map((budget) => (
+                <TableRow>
+                  <TableCell>{budget.id}</TableCell>
+                  <TableCell>{budget.name}</TableCell>
+                  <TableCell>{budget.cost}</TableCell>
+                  <TableCell>{budget.fin_tool}</TableCell>
+                  <TableCell>{budget.goal}</TableCell>
+                  <TableCell className="flex gap-3">
+                    <Pencil className="h-5 w-5 hover:text-gray-700"/>
+                    <Trash2 className="h-5 w-5 hover:text-gray-700"/>
+                  </TableCell>
+                </TableRow>
+              ))
+              :
+              <span className="">Бюджетов пока нет</span>
+            }
           </TableBody>
         </Table>
       </Card>
