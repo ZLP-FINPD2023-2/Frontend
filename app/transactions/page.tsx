@@ -1,7 +1,7 @@
-import { Pencil, Trash2 } from "lucide-react"
+import {Pencil, Trash2} from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import {Button} from "@/components/ui/button"
+import {Card} from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -10,6 +10,45 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+
+const transactions = [
+  {
+    id: 1,
+    title: 'Перевод на машину',
+    amount: 100000,
+    date: "9.10.2023 21:13",
+    frequency: "Ежемесячно",
+    duration: "5 месяцев",
+    budget: "Машина"
+  },
+  {
+    id: 2,
+    title: 'Аренда квартиры',
+    amount: -55000,
+    date: "8.10.2023 21:13",
+    frequency: "Ежемесячно",
+    duration: "24 месяца",
+    budget: ""
+  },
+  {
+    id: 3,
+    title: 'Зарплата',
+    amount: 200000,
+    date: "30.09.2023 21:13",
+    frequency: "Ежемесячно",
+    duration: "36 месяцев",
+    budget: ""
+  },
+  {
+    id: 4,
+    title: 'Акции',
+    amount: 30000,
+    date: "9.10.2023 21:13",
+    frequency: "Ежемесячно",
+    duration: "6 месяцев",
+    budget: "Дом"
+  },
+]
 
 export default function Transaction() {
   return (
@@ -30,58 +69,25 @@ export default function Transaction() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>1</TableCell>
-              <TableCell>Перевод на машину</TableCell>
-              <TableCell className="text-green-500">+100 000Р</TableCell>
-              <TableCell>9.10.2023 21:13</TableCell>
-              <TableCell>Ежемесячно</TableCell>
-              <TableCell>5 месяцев</TableCell>
-              <TableCell>Машина</TableCell>
-              <TableCell className="flex gap-3">
-                <Pencil className="h-5 w-5 hover:text-gray-700" />
-                <Trash2 className="h-5 w-5 hover:text-gray-700" />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>2</TableCell>
-              <TableCell>Аренда квартиры</TableCell>
-              <TableCell className="text-red-500">-55 000Р</TableCell>
-              <TableCell>8.10.2023 21:13</TableCell>
-              <TableCell>Ежемесячно</TableCell>
-              <TableCell>24 месяца</TableCell>
-              <TableCell>-</TableCell>
-              <TableCell>
-                {/* <FileEditIcon className="mr-2 inline h-5 w-5 text-gray-500 hover:text-gray-700" />
-                <DeleteIcon className="inline h-5 w-5 text-gray-500 hover:text-gray-700" /> */}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>3</TableCell>
-              <TableCell>Зарплата</TableCell>
-              <TableCell className="text-green-500">+200 000Р</TableCell>
-              <TableCell>30.09.2023 21:13</TableCell>
-              <TableCell>Ежемесячно</TableCell>
-              <TableCell>36 месяцев</TableCell>
-              <TableCell>-</TableCell>
-              <TableCell>
-                {/* <FileEditIcon className="mr-2 inline h-5 w-5 text-gray-500 hover:text-gray-700" />
-                <DeleteIcon className="inline h-5 w-5 text-gray-500 hover:text-gray-700" /> */}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>4</TableCell>
-              <TableCell>Акции</TableCell>
-              <TableCell className="text-green-500">+30 000Р</TableCell>
-              <TableCell>9.10.2023 21:13</TableCell>
-              <TableCell>Ежемесячно</TableCell>
-              <TableCell>6 месяцев</TableCell>
-              <TableCell>Дом</TableCell>
-              <TableCell>
-                {/* <FileEditIcon className="mr-2 inline h-5 w-5 text-gray-500 hover:text-gray-700" />
-                <DeleteIcon className="inline h-5 w-5 text-gray-500 hover:text-gray-700" /> */}
-              </TableCell>
-            </TableRow>
+            {transactions.length > 0 ? transactions.map((transaction) => (
+                <TableRow>
+                  <TableCell>{transaction.id}</TableCell>
+                  <TableCell>{transaction.title}</TableCell>
+                  <TableCell
+                    className={transaction.amount > 0 ? `text-green-500` : "text-red-500"}>{transaction.amount > 0 ? `+${transaction.amount}Р` : `${transaction.amount}Р`}</TableCell>
+                  <TableCell>{transaction.date}</TableCell>
+                  <TableCell>{transaction.frequency}</TableCell>
+                  <TableCell>{transaction.duration}</TableCell>
+                  <TableCell>{transaction.budget ? transaction.budget : "-"}</TableCell>
+                  <TableCell className="flex gap-3">
+                    <Pencil className="h-5 w-5 hover:text-gray-700"/>
+                    <Trash2 className="h-5 w-5 hover:text-gray-700"/>
+                  </TableCell>
+                </TableRow>
+              ))
+              :
+              <span className="">Транзакций пока нет</span>
+            }
           </TableBody>
         </Table>
       </Card>
