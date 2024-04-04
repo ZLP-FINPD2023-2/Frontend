@@ -13,12 +13,20 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 export default function IndexPage() {
+  const schema = z.object({
+    mail: z.string().email("Введите корректный адрес электронной почты"),
+    password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
+  });
+
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(schema)
+  });
 
   return (
     <section className="grid h-[90vh] grid-flow-col xl:grid-cols-2">
       <div className="hidden place-content-center bg-gray-200 dark:bg-slate-950 xl:grid">
-        <Button variant="secondary" asChild>
-          <Link href="/auth/reg" className="w-60">
+        <Button variant="secondary" className="bg-slate-400 dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800" asChild>
+          <Link href="/auth/reg" className="w-60 text-white">
             Зарегистрироваться
           </Link>
         </Button>
@@ -41,7 +49,8 @@ export default function IndexPage() {
                           type="email"
                           placeholder="pochta@mail.ru"
                           autoComplete="email"
-                        />
+                          {...register("mail")}
+                          />
                         <p className="mt-1 text-sm text-gray-500">
                           Введите свою почту
                         </p>
@@ -53,7 +62,14 @@ export default function IndexPage() {
                           type="password"
                           placeholder="Введите пароль"
                           autoComplete="password"
+                          required
+                          {...register("password")}
                         />
+                        {errors.password && typeof errors.password.message === 'string' && (
+                          <p className="mt-1 text-sm text-gray-500">
+                            {errors.password.message}
+                          </p>
+                        )}
                         <Link href="/auth/forgot" className="text-sm text-gray-500">
                           Забыли пароль?
                         </Link>
@@ -61,6 +77,7 @@ export default function IndexPage() {
                     </div>
                   </div>
                 </div>
+                <Button className="mt-2 w-full xl:mt-6">Продолжить</Button>
               </form>
             </CardContent>
           </Card>
@@ -70,7 +87,6 @@ export default function IndexPage() {
               Зарегистрироваться
             </Link>
           </p>
-          <Button className="mt-2 w-full xl:mt-6">Продолжить</Button>
         </div>
       </div>
     </section>

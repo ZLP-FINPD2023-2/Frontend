@@ -154,6 +154,7 @@ export default function IndexPage() {
                                         date < new Date("1900-01-01")
                                       }
                                       initialFocus
+                                      captionLayout="dropdown"
                                     />
                                   </PopoverContent>
                                 </Popover>
@@ -226,8 +227,8 @@ export default function IndexPage() {
         </div>
       </div>
       <div className="hidden place-content-center bg-gray-200 dark:bg-slate-950 xl:grid">
-        <Button variant="secondary" asChild>
-          <Link href="/auth/login" className="w-60">
+        <Button variant="secondary" className="bg-slate-400 dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800" asChild>
+          <Link href="/auth/login" className="w-60 text-white">
             Войти
           </Link>
         </Button>

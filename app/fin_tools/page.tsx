@@ -1,11 +1,11 @@
 "use client"
-import { Pencil, Trash2 } from "lucide-react"
+import {Pencil, Trash2} from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useForm } from "react-hook-form"
+import {Button} from "@/components/ui/button"
+import {Card} from "@/components/ui/card"
+import {Input} from "@/components/ui/input"
+import {Label} from "@/components/ui/label"
+import {useForm} from "react-hook-form"
 
 import {
   Select,
@@ -44,8 +44,28 @@ import {
 } from "@/components/ui/form"
 
 import * as z from "zod"
-import { toast } from "@/components/ui/use-toast"
+import {toast} from "@/components/ui/use-toast"
 import InputDate from "@/components/input-date"
+
+const finTools = [
+  {
+    id: 1,
+    name: 'Вклад',
+    frequency: "Ежемесячно",
+    profit: "1.13",
+    start_date: "9.10.2023",
+    end_date: "9.10.2024"
+  },
+  {
+    id: 2,
+    name: 'Облигация',
+    frequency: "Ежемесячно",
+    profit: "1.15",
+    start_date: "9.10.2023",
+    end_date: "9.10.2024"
+  },
+]
+
 
 const FormSchema = z.object({
   start: z.date({
@@ -69,6 +89,7 @@ export default function Fin_tools() {
       ),
     })
   }
+
   return (
     <div className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
       <div className="flex items-center justify-between w-full">
@@ -76,42 +97,42 @@ export default function Fin_tools() {
           Финансовые инструменты
         </h1>
         <Form {...form}>
-        <Dialog>
-          <DialogTrigger>
-            <Button variant="default">Добавить</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Финансовые инструменты</DialogTitle>
-            </DialogHeader>
+          <Dialog>
+            <DialogTrigger>
+              <Button variant="default">Добавить</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Финансовые инструменты</DialogTitle>
+              </DialogHeader>
               <Label htmlFor="name">Название</Label>
               <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Выберете инструмент" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="deposit">Вклад</SelectItem>
-                    <SelectItem value="bond">Облигация</SelectItem>
-                  </SelectContent>
+                <SelectTrigger>
+                  <SelectValue placeholder="Выберете инструмент"/>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="deposit">Вклад</SelectItem>
+                  <SelectItem value="bond">Облигация</SelectItem>
+                </SelectContent>
               </Select>
               <Label htmlFor="period">Периодичность</Label>
               <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Выберете период" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="month">Ежемесячно</SelectItem>
-                    <SelectItem value="year">Ежегодно</SelectItem>
-                  </SelectContent>
+                <SelectTrigger>
+                  <SelectValue placeholder="Выберете период"/>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="month">Ежемесячно</SelectItem>
+                  <SelectItem value="year">Ежегодно</SelectItem>
+                </SelectContent>
               </Select>
               <Label htmlFor="coefficient">Коэффициент прибыли</Label>
-              <Input id="coefficient" type="number" placeholder="1.15" />
-              <InputDate form={form} field="start"label="Дата начала"/>
-              <InputDate form={form} field="end"label="Дата конца"/>
+              <Input id="coefficient" type="number" placeholder="1.15"/>
+              <InputDate form={form} field="start" label="Дата начала"/>
+              <InputDate form={form} field="end" label="Дата конца"/>
               <Button variant="default" className="mt-4 w-full">Сохранить</Button>
-          </DialogContent>
-        </Dialog>
-      </Form>
+            </DialogContent>
+          </Dialog>
+        </Form>
       </div>
       <Card className="h-screen rounded-3xl p-6 overflow-x-auto">
         <Table className="min-w-full">
@@ -127,30 +148,23 @@ export default function Fin_tools() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>1</TableCell>
-              <TableCell>Вклад</TableCell>
-              <TableCell>Ежемесячно</TableCell>
-              <TableCell>1.13</TableCell>
-              <TableCell>9.10.2023</TableCell>
-              <TableCell>9.10.2024</TableCell>
-              <TableCell className="flex gap-3">
-                <Pencil className="h-5 w-5 hover:text-gray-700" />
-                <Trash2 className="h-5 w-5 hover:text-gray-700" />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>2</TableCell>
-              <TableCell>Облигация</TableCell>
-              <TableCell>Ежемесячно</TableCell>
-              <TableCell>1.15</TableCell>
-              <TableCell>9.10.2023</TableCell>
-              <TableCell>9.10.2024</TableCell>
-              <TableCell className="flex gap-3">
-                {/* <FileEditIcon className="mr-2 inline h-5 w-5 text-gray-500 hover:text-gray-700" />
-                <DeleteIcon className="inline h-5 w-5 text-gray-500 hover:text-gray-700" /> */}
-              </TableCell>
-            </TableRow>
+            {finTools.length > 0 ? finTools.map((finTool) => (
+                <TableRow>
+                  <TableCell>{finTool.id}</TableCell>
+                  <TableCell>{finTool.name}</TableCell>
+                  <TableCell>{finTool.frequency}</TableCell>
+                  <TableCell>{finTool.profit}</TableCell>
+                  <TableCell>{finTool.start_date}</TableCell>
+                  <TableCell>{finTool.end_date}</TableCell>
+                  <TableCell className="flex gap-3">
+                    <Pencil className="h-5 w-5 hover:text-gray-700"/>
+                    <Trash2 className="h-5 w-5 hover:text-gray-700"/>
+                  </TableCell>
+                </TableRow>
+              ))
+              :
+              <span className="">Финансовых инструментов пока нет</span>
+            }
           </TableBody>
         </Table>
       </Card>
