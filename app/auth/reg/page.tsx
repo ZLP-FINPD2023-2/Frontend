@@ -31,7 +31,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-import ky from "ky";
 import {useRouter} from "next/navigation";
 import kyInstance from "@/utils/api";
 
