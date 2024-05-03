@@ -10,7 +10,7 @@ import {Dialog, DialogContent, DialogTrigger,} from "@/components/ui/dialog"
 import {BarList} from '@tremor/react';
 import * as React from 'react';
 import {useState} from 'react';
-import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
+import {FieldValues, SubmitHandler} from "react-hook-form";
 import kyInstance from "@/utils/api";
 import {useMutation, useQuery, useQueryClient,} from '@tanstack/react-query'
 import GoalForm from "@/components/goal-form";
