@@ -5,27 +5,16 @@ import {Button} from "@/components/ui/button"
 import {Card} from "@/components/ui/card"
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
 
-
-import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,} from "@/components/ui/dialog"
-
-import {Input} from "@/components/ui/input"
+import {Dialog, DialogContent, DialogTrigger,} from "@/components/ui/dialog"
 
 import {BarList} from '@tremor/react';
 import * as React from 'react';
 import {useState} from 'react';
-import {Form, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
-import * as z from "zod";
-import {zodResolver} from "@hookform/resolvers/zod";
 import kyInstance from "@/utils/api";
 import {useMutation, useQuery, useQueryClient,} from '@tanstack/react-query'
+import GoalForm from "@/components/goal-form";
 
-
-interface GoalInterface {
-  id: number,
-  target_amount: number,
-  title: string
-}
 
 const pages = [
   {
@@ -42,18 +31,6 @@ const pages = [
   },
 ]
 
-const schema = z.object({
-  target_amount: z.number(
-    {
-      required_error: "Сумма обязательна",
-    }
-  ),
-  title: z.string(
-    {
-      required_error: "Название обязательно",
-    }
-  ),
-});
 const valueFormatter = (number: number) =>
   `${Intl.NumberFormat('us').format(number).toString()}`;
 
@@ -63,16 +40,12 @@ const fetchGoals = (): Promise<GoalInterface[]> =>
 
 export default function Goals() {
   const queryClient = useQueryClient()
-
-  const form = useForm<z.infer<typeof schema>>({
-      resolver: zodResolver(schema),
-    }
-  )
   const [extended, setExtended] = useState(false);
   const {isPending, isError, data, error} = useQuery({
     queryKey: ['goals'],
     queryFn: fetchGoals,
   })
+
   const mutation = useMutation({
     mutationFn: fetchGoals,
     onSuccess: () => {
@@ -87,11 +60,31 @@ export default function Goals() {
   if (isError) {
     return <span>Error: {error.message}</span>
   }
+  const deleteGoal = (id: number) => {
+    kyInstance.delete(`goal/${id}`)
+    mutation.mutate()
+  }
+  const updateGoal: SubmitHandler<FieldValues> = async (data) => {
+    try {
+      console.log(data)
+      const formDataToSend = {
+        target_amount: data.target_amount,
+        title: data.title,
+      };
+      const response = await kyInstance.patch(`goal/${data.id}`, {
+        json: formDataToSend,
+      }).json();
+      mutation.mutate()
+    } catch (error) {
+      console.error('Произошла ошибка:', error);
+    }
+  }
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
-      const response = await kyInstance.post('goal', {
+      await kyInstance.post('goal', {
         json: data,
-      }).json();
+      });
       mutation.mutate()
     } catch (error) {
       console.error('Произошла ошибка:', error);
@@ -106,41 +99,7 @@ export default function Goals() {
             <Button variant="default">Добавить</Button>
           </DialogTrigger>
           <DialogContent>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="basis-1/2"
-              >
-                <DialogHeader>
-                  <DialogTitle>Цель</DialogTitle>
-                </DialogHeader>
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({field}) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Название</FormLabel>
-                      <Input id="title" placeholder="название" value={field.value}
-                             onChange={(e) => field.onChange(e.target.value)}/>
-                      <FormMessage/>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="target_amount"
-                  render={({field}) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Сумма</FormLabel>
-                      <Input id="target_amount" placeholder="1 000 000" value={field.value}
-                             onChange={(e) => field.onChange(+e.target.value)}/>
-                      <FormMessage/>
-                    </FormItem>
-                  )}
-                />
-                <Button variant="default" className="mt-4 w-full">Сохранить</Button>
-              </form>
-            </Form>
+            <GoalForm onSubmit={onSubmit}/>
           </DialogContent>
         </Dialog>
       </div>
@@ -164,8 +123,16 @@ export default function Goals() {
                   <TableCell>{goal.title}</TableCell>
                   <TableCell>{goal.target_amount}</TableCell>
                   <TableCell className="flex gap-3">
-                    <Pencil className="h-5 w-5 hover:text-gray-700"/>
-                    <Trash2 className="h-5 w-5 hover:text-gray-700"/>
+                    <Dialog>
+                      <DialogTrigger>
+                        <Pencil className="h-5 w-5 hover:text-gray-700"/>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <GoalForm onSubmit={updateGoal}
+                                  defaultValues={{target_amount: goal.target_amount, title: goal.title, id: goal.id}}/>
+                      </DialogContent>
+                    </Dialog>
+                    < Trash2 className="h-5 w-5 hover:text-gray-700" onClick={() => deleteGoal(goal.id)}/>
                   </TableCell>
                 </TableRow>
               ))
