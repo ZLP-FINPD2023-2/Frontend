@@ -12,6 +12,8 @@ import {format} from "date-fns";
 import {ru} from "date-fns/locale";
 import {CalendarIcon} from "lucide-react";
 import {Calendar} from "@/components/ui/calendar";
+import kyInstance from "@/utils/api";
+import {useQuery} from "@tanstack/react-query";
 
 const schema = z.object({
   id: z.number().min(0, {message: "ID должен быть положительным числом"}),
@@ -20,8 +22,8 @@ const schema = z.object({
     required_error: "Дата транзакции обязательна",
   }),
   amount: z.number().min(0, {message: "Сумма должна быть положительным числом"}),
-  budget_from: z.number().min(0, {message: "Бюджет от должен быть положительным числом"}),
-  budget_to: z.number().min(0, {message: "Бюджет до должен быть положительным числом"}),
+  budget_from: z.string().min(0, {message: "Бюджет от должен быть положительным числом"}),
+  budget_to: z.string().min(0, {message: "Бюджет до должен быть положительным числом"}),
 });
 
 interface TransactionFormProps {
@@ -29,7 +31,15 @@ interface TransactionFormProps {
   defaultValues?: TransactionInterface
 }
 
+const fetchBudgets = (): Promise<GoalInterface[]> =>
+  kyInstance.get('budget').then((response) => response.json())
+
+
 const TransactionForm = ({onSubmit, defaultValues}: TransactionFormProps) => {
+  const {data} = useQuery({
+    queryKey: ['budgets'],
+    queryFn: fetchBudgets,
+  })
   const form = useForm<z.infer<typeof schema>>({
       resolver: zodResolver(schema),
       defaultValues: {
@@ -37,8 +47,8 @@ const TransactionForm = ({onSubmit, defaultValues}: TransactionFormProps) => {
         title: defaultValues?.title || "",
         date: defaultValues?.date ? new Date(defaultValues.date) : new Date(),
         amount: Number(defaultValues?.amount) || 0,
-        budget_from: Number(defaultValues?.budget_from) || 0,
-        budget_to: Number(defaultValues?.budget_to) || 0,
+        budget_from: defaultValues?.budget_from.toString() || "",
+        budget_to: defaultValues?.budget_to.toString() || "",
       }
     }
   )
@@ -80,9 +90,15 @@ const TransactionForm = ({onSubmit, defaultValues}: TransactionFormProps) => {
           name="budget_from"
           render={({field}) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Сумма</FormLabel>
-              <Input id="budget_from" placeholder="1 000 000" value={field.value}
-                     onChange={(e) => field.onChange(+e.target.value)}/>
+              <FormLabel>Бюджет списания</FormLabel>
+              <select id="budget_from" {...field}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {data ? data.map((budget) => (
+                    <option key={budget.id} value={budget.id}>{budget.title}</option>
+                  ))
+                  : <option value="-1">Нет бюджетов</option>}
+              </select>
               <FormMessage/>
             </FormItem>
           )}
@@ -92,9 +108,15 @@ const TransactionForm = ({onSubmit, defaultValues}: TransactionFormProps) => {
           name="budget_to"
           render={({field}) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Сумма</FormLabel>
-              <Input id="budget_to" placeholder="1 000 000" value={field.value}
-                     onChange={(e) => field.onChange(+e.target.value)}/>
+              <FormLabel>Бюджет поступления</FormLabel>
+              <select id="budget_from" {...field}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {data ? data.map((budget) => (
+                    <option key={budget.id} value={budget.id}>{budget.title}</option>
+                  ))
+                  : <option value="-1">Нет бюджетов</option>}
+              </select>
               <FormMessage/>
             </FormItem>
           )}
@@ -104,7 +126,7 @@ const TransactionForm = ({onSubmit, defaultValues}: TransactionFormProps) => {
           name="date"
           render={({field}) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Дата рождения</FormLabel>
+              <FormLabel>Дата транзакции</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -123,7 +145,7 @@ const TransactionForm = ({onSubmit, defaultValues}: TransactionFormProps) => {
                       ) : (
                         <span>Укажите дату</span>
                       )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50"/>
+                      <CalendarIcon className="ml-auto size-4 opacity-50"/>
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
