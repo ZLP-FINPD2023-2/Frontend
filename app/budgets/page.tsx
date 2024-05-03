@@ -25,7 +25,6 @@ import {FieldValues, SubmitHandler} from "react-hook-form";
 import kyInstance from "@/utils/api";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import * as React from "react";
-import GoalForm from "@/components/goal-form";
 
 const fetchBudgets = (): Promise<BudgetInterface[]> =>
   kyInstance.get('budget').then((response) => response.json())
