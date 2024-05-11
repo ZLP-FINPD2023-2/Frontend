@@ -71,6 +71,9 @@ dependencies:
   exiftool-vendored:
     specifier: ^23.7.0
     version: 23.7.0
+  ky:
+    specifier: ^1.2.4
+    version: 1.2.4
   lucide-react:
     specifier: 0.294.0
     version: 0.294.0(react@18.2.0)
@@ -5244,6 +5247,11 @@ packages:
     dependencies:
       json-buffer: 3.0.1
     dev: true
+
+  /ky@1.2.4:
+    resolution: {integrity: sha512-CfSrf4a0yj1n6WgPT6kQNQOopIGLkQzqSAXo05oKByaH7G3SiqW4a8jGox0p9whMXqO49H7ljgigivrMyycAVA==}
+    engines: {node: '>=18'}
+    dev: false
 
   /language-subtag-registry@0.3.22:
     resolution: {integrity: sha512-tN0MCzyWnoz/4nHS6uxdlFWoUZT7ABptwKPQ52Ea7URk6vll88bWBVhodtnlfEuCcKWNGoc+uGbw1cwa9IKh/w==}

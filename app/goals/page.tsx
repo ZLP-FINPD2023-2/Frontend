@@ -3,37 +3,18 @@ import {Pencil, Trash2} from "lucide-react"
 
 import {Button} from "@/components/ui/button"
 import {Card} from "@/components/ui/card"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-
-import {Label} from "@/components/ui/label"
-import {Input} from "@/components/ui/input"
+import {Dialog, DialogContent, DialogTrigger,} from "@/components/ui/dialog"
 
 import {BarList} from '@tremor/react';
+import * as React from 'react';
 import {useState} from 'react';
+import {FieldValues, SubmitHandler} from "react-hook-form";
+import kyInstance from "@/utils/api";
+import {useMutation, useQuery, useQueryClient,} from '@tanstack/react-query'
+import GoalForm from "@/components/goal-form";
+
 
 const pages = [
   {
@@ -50,36 +31,65 @@ const pages = [
   },
 ]
 
-const goals = [
-  {
-    id: 1,
-    name: 'Машина',
-    cost: "1.500.000Р",
-    accumulated: "1.000.000Р",
-    budgets: "Бюджеты 1,2,3"
-  },
-  {
-    id: 2,
-    name: 'Дом',
-    cost: "10.500.000Р",
-    accumulated: "1.000.000Р",
-    budgets: "Бюджеты 1,2,3"
-  },
-  {
-    id: 3,
-    name: 'Компьютер',
-    cost: "300.000Р",
-    accumulated: "250.000Р",
-    budgets: "Бюджеты 1,2,3"
-  },
-]
-
-
 const valueFormatter = (number: number) =>
   `${Intl.NumberFormat('us').format(number).toString()}`;
 
+const fetchGoals = (): Promise<GoalInterface[]> =>
+  kyInstance.get('goal').then((response) => response.json())
+
+
 export default function Goals() {
+  const queryClient = useQueryClient()
   const [extended, setExtended] = useState(false);
+  const {isPending, isError, data, error} = useQuery({
+    queryKey: ['goals'],
+    queryFn: fetchGoals,
+  })
+
+  const mutation = useMutation({
+    mutationFn: fetchGoals,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['goals']})
+    },
+  })
+
+  if (isPending) {
+    return <span>Loading...</span>
+  }
+
+  if (isError) {
+    return <span>Error: {error.message}</span>
+  }
+  const deleteGoal = (id: number) => {
+    kyInstance.delete(`goal/${id}`)
+    mutation.mutate()
+  }
+  const updateGoal: SubmitHandler<FieldValues> = async (data) => {
+    try {
+      console.log(data)
+      const formDataToSend = {
+        target_amount: data.target_amount,
+        title: data.title,
+      };
+      const response = await kyInstance.patch(`goal/${data.id}`, {
+        json: formDataToSend,
+      }).json();
+      mutation.mutate()
+    } catch (error) {
+      console.error('Произошла ошибка:', error);
+    }
+  }
+
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    try {
+      await kyInstance.post('goal', {
+        json: data,
+      });
+      mutation.mutate()
+    } catch (error) {
+      console.error('Произошла ошибка:', error);
+    }
+  }
   return (
     <div className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
       <div className="flex items-center justify-between w-full">
@@ -89,27 +99,7 @@ export default function Goals() {
             <Button variant="default">Добавить</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Цель</DialogTitle>
-            </DialogHeader>
-            <Label htmlFor="name">Название</Label>
-            <Input id="name" type="text" placeholder="название"/>
-            <Label htmlFor="desc">Описание</Label>
-            <Input id="desc" type="text" placeholder="описание"/>
-            <Label htmlFor="amount">Сумма</Label>
-            <Input id="amount" type="number" placeholder="1 000 000"/>
-            <Label htmlFor="period">Бюджеты</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Выберете бюджеты"/>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">Бюджет 1</SelectItem>
-                <SelectItem value="2">Бюджет 2</SelectItem>
-                <SelectItem value="3">Бюджет 3</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="default" className="mt-4 w-full">Сохранить</Button>
+            <GoalForm onSubmit={onSubmit}/>
           </DialogContent>
         </Dialog>
       </div>
@@ -127,21 +117,25 @@ export default function Goals() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {goals.length > 0 ? goals.map((goal) => (
-                  <TableRow>
-                    <TableCell>{goal.id}</TableCell>
-                    <TableCell>{goal.name}</TableCell>
-                    <TableCell>{goal.cost}</TableCell>
-                    <TableCell>{goal.accumulated}</TableCell>
-                    <TableCell>{goal.budgets}</TableCell>
-                    <TableCell className="flex gap-3">
-                      <Pencil className="h-5 w-5 hover:text-gray-700"/>
-                      <Trash2 className="h-5 w-5 hover:text-gray-700"/>
-                    </TableCell>
-                  </TableRow>
-                ))
-                :
-                <span className="">Целей пока нет</span>
+              {data?.map((goal) => (
+                <TableRow key={goal.id}>
+                  <TableCell>{goal.id}</TableCell>
+                  <TableCell>{goal.title}</TableCell>
+                  <TableCell>{goal.target_amount}</TableCell>
+                  <TableCell className="flex gap-3">
+                    <Dialog>
+                      <DialogTrigger>
+                        <Pencil className="h-5 w-5 hover:text-gray-700"/>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <GoalForm onSubmit={updateGoal}
+                                  defaultValues={{target_amount: goal.target_amount, title: goal.title, id: goal.id}}/>
+                      </DialogContent>
+                    </Dialog>
+                    < Trash2 className="h-5 w-5 hover:text-gray-700" onClick={() => deleteGoal(goal.id)}/>
+                  </TableCell>
+                </TableRow>
+              ))
               }
             </TableBody>
           </Table>

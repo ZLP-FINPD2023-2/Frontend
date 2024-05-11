@@ -1,18 +1,8 @@
 "use client"
-import { Pencil, Trash2 } from "lucide-react"
+import {Pencil, Trash2} from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import {Button} from "@/components/ui/button"
+import {Card} from "@/components/ui/card"
 
 import {
   Table,
@@ -26,37 +16,74 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import BudgetForm from "@/components/budget-form";
+import {FieldValues, SubmitHandler} from "react-hook-form";
+import kyInstance from "@/utils/api";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import * as React from "react";
 
-const budgets = [
-  {
-    id: 1,
-    name: 'На компьютер',
-    cost: "100 000Р",
-    fin_tool: "Вклад",
-    goal: "Компьютер",
-  },
-  {
-    id: 2,
-    name: 'На машину',
-    cost: "1 000 000Р",
-    fin_tool: "Облигации",
-    goal: "Машина",
-  },
-  {
-    id: 3,
-    name: 'На дом',
-    cost: "400 000Р",
-    fin_tool: "Облигации",
-    goal: "Дом",
-  },
-]
+const fetchBudgets = (): Promise<BudgetInterface[]> =>
+  kyInstance.get('budget').then((response) => response.json())
+
 
 export default function Budgets() {
+  const queryClient = useQueryClient()
+  const {isPending, isError, data, error} = useQuery({
+    queryKey: ['budgets'],
+    queryFn: fetchBudgets,
+  })
+
+  const mutation = useMutation({
+    mutationFn: fetchBudgets,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['budgets']})
+    },
+  })
+
+  if (isPending) {
+    return <span>Loading...</span>
+  }
+
+  if (isError) {
+    return <span>Error: {error.message}</span>
+  }
+  const deleteBudget = (id: number) => {
+    kyInstance.delete(`budget/${id}`)
+    mutation.mutate()
+  }
+  const updateBudget: SubmitHandler<FieldValues> = async (data) => {
+    try {
+      const formDataToSend = {
+        id: data.id,
+        title: data.title,
+        goal_id: Number(data.goal),
+      };
+      const response = await kyInstance.patch(`budget/${data.id}`, {
+        json: formDataToSend,
+      }).json();
+      mutation.mutate()
+    } catch (error) {
+      console.error('Произошла ошибка:', error);
+    }
+  }
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    try {
+      const formDataToSend = {
+        title: data.title,
+        goal_id: Number(data.goal),
+      };
+      await kyInstance.post('budget', {
+        json: formDataToSend,
+      });
+      mutation.mutate()
+    } catch (error) {
+      console.error('Произошла ошибка:', error);
+    }
+  }
   return (
     <div className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
       <div className="flex items-center justify-between w-full">
@@ -71,28 +98,7 @@ export default function Budgets() {
             <DialogHeader>
               <DialogTitle>Новый бюджет</DialogTitle>
             </DialogHeader>
-              <Label htmlFor="name">Название</Label>
-              <Input id="name" type="text" placeholder="Введите название" />
-              <Label htmlFor="goal">Цель</Label>
-              <Input id="goal" type="text" placeholder="Введите цель"  />
-              <Label htmlFor="amount">Сумма</Label>
-              <Input id="amount" type="text" placeholder="Введите сумма" />
-                <Label htmlFor="instrument">
-                  Фин.инструменты
-                </Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="выберите инструмент" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="light">Ракета</SelectItem>
-                    <SelectItem value="dark">Крипта</SelectItem>
-                    <SelectItem value="system">Темки</SelectItem>
-                  </SelectContent>
-                </Select>
-              <Label htmlFor="description">Описание</Label>
-              <Input id="description" type="text" placeholder="Введите описание" />
-              <Button variant="default" className="mt-4 w-full">Сохранить</Button>
+            <BudgetForm onSubmit={onSubmit}/>
           </DialogContent>
         </Dialog>
       </div>
@@ -109,16 +115,22 @@ export default function Budgets() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {budgets.length > 0 ? budgets.map((budget) => (
-                <TableRow>
+            {data ? data.map((budget) => (
+                <TableRow key={budget.id}>
                   <TableCell>{budget.id}</TableCell>
-                  <TableCell>{budget.name}</TableCell>
-                  <TableCell>{budget.cost}</TableCell>
-                  <TableCell>{budget.fin_tool}</TableCell>
+                  <TableCell>{budget.title}</TableCell>
                   <TableCell>{budget.goal}</TableCell>
                   <TableCell className="flex gap-3">
-                    <Pencil className="h-5 w-5 hover:text-gray-700"/>
-                    <Trash2 className="h-5 w-5 hover:text-gray-700"/>
+                    <Dialog>
+                      <DialogTrigger>
+                        <Pencil className="h-5 w-5 hover:text-gray-700"/>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <BudgetForm onSubmit={updateBudget}
+                                    defaultValues={{goal: budget.goal, title: budget.title, id: budget.id}}/>
+                      </DialogContent>
+                    </Dialog>
+                    <Trash2 onClick={() => deleteBudget(budget.id)} className="h-5 w-5 hover:text-gray-700"/>
                   </TableCell>
                 </TableRow>
               ))

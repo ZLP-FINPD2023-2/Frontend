@@ -2,71 +2,103 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { format } from "date-fns"
-import { ru } from "date-fns/locale"
-import { CalendarIcon } from "lucide-react"
-import { useForm } from "react-hook-form"
+import {zodResolver} from "@hookform/resolvers/zod"
+import {format} from "date-fns"
+import {ru} from "date-fns/locale"
+import {CalendarIcon} from "lucide-react"
+import {FieldValues, SubmitHandler, useForm} from "react-hook-form"
 import * as z from "zod"
 
-import { siteConfig } from "@/config/site"
-import { cn } from "@/lib/utils"
-import { Button, buttonVariants } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import {cn} from "@/lib/utils"
+import {Button} from "@/components/ui/button"
+import {Calendar} from "@/components/ui/calendar"
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import {Input} from "@/components/ui/input"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { toast } from "@/components/ui/use-toast"
+
+import {useRouter} from "next/navigation";
+import kyInstance from "@/utils/api";
 
 const FormSchema = z.object({
-  dob: z.date({
-    required_error: "A date of birth is required.",
+  birthday: z.date({
+    required_error: "Дата рождения обязательна",
   }),
-})
+  patronymic: z.string().default(""),
+  email: z.string(
+    {
+      required_error: "Почта обязательня",
+    }
+  ),
+  first_name: z.string(
+    {
+      required_error: "Имя обязательно",
+    }
+  ),
+  gender: z.string().default("Male").refine(value => value === "Male" || value === "Female", {
+    message: "Укажите пол"
+  }),
+  last_name: z.string(
+    {
+      required_error: "Фамилия обязательна",
+    }
+  ),
+  terms: z.boolean({
+    required_error: "Необходимо согласиться с обработкой персональных данных",
+  }),
+  password: z.string({
+    required_error: "Пароль обязателен",
+  }).min(6, 'Пароль должен содержать минимум 6 символов'),
+  confirm_password: z.string({
+    required_error: "Пароль обязателен",
+  }).min(6, 'Пароль должен содержать минимум 6 символов')
+}).refine((data) => data.password === data.confirm_password, {
+  message: "Пароли должны совпадать",
+  path: ["confirm_password"],
+});
 
 export default function IndexPage() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-  })
+  const router = useRouter()
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
+  const form = useForm<z.infer<typeof FormSchema>>({
+      resolver: zodResolver(FormSchema),
+    }
+  )
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    try {
+      let date = `${('0' + data.birthday.getDate()).slice(-2)}-${('0' + (data.birthday.getMonth() + 1)).slice(-2)}-${data.birthday.getFullYear()}`
+      const formDataToSend = {
+        birthday: date,
+        patronymic: data.patronymic,
+        email: data.email,
+        first_name: data.first_name,
+        gender: data.gender,
+        last_name: data.last_name,
+        password: data.password,
+      };
+      const response = await kyInstance.post('auth/register', {
+        json: formDataToSend,
+      });
+      if (response.ok) {
+        router.push('/auth/login');
+      }
+    } catch (error) {
+      console.error('Произошла ошибка:', error);
+    }
   }
   return (
     <section className="grid h-screen grid-flow-col xl:grid-cols-2">
@@ -77,147 +109,205 @@ export default function IndexPage() {
           </h1>
           <Card className="mt-5 w-full py-6 pb-0">
             <CardContent>
-              <form>
-                <div className="grid w-full items-center gap-4">
-                  <div className="flex flex-col gap-1 space-y-1.5">
-                    <div className="flex flex-col justify-between gap-5 sm:flex-row">
-                      <div className="basis-1/2">
-                        <Label htmlFor="surname">Фамилия</Label>
-                        <Input
-                          className=""
-                          id="surname"
-                          placeholder="Иванов"
-                          autoComplete="family-name"
-                        />
-                      </div>
-                      <div className="basis-1/2">
-                        <Label htmlFor="name">Имя</Label>
-                        <Input
-                          className=""
-                          id="name"
-                          placeholder="Иван"
-                          autoComplete="given-name"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col justify-between gap-5 sm:flex-row">
-                      <div className="basis-1/2">
-                        <Label htmlFor="patronymic">
-                          Отчество{" "}
-                          <span className="text-gray-500">(при наличии)</span>
-                        </Label>
-                        <Input id="patronymic" placeholder="Иванович" />
-                      </div>
-                      <Form {...form}>
-                        <form
-                          onSubmit={form.handleSubmit(onSubmit)}
-                          className="basis-1/2"
-                        >
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="basis-1/2"
+                >
+                  <div className="grid w-full items-center gap-4">
+                    <div className="flex flex-col gap-1 space-y-1.5">
+                      <div className="flex flex-col justify-between gap-5 sm:flex-row">
+                        <div className="basis-1/2">
                           <FormField
                             control={form.control}
-                            name="dob"
-                            render={({ field }) => (
+                            name="last_name"
+                            render={({field}) => (
                               <FormItem className="flex flex-col">
-                                <FormLabel>Дата рождения</FormLabel>
-                                <Popover>
-                                  <PopoverTrigger asChild>
-                                    <FormControl>
-                                      <Button
-                                        variant={"outline"}
-                                        className={cn(
-                                          "pl-3 text-left font-normal",
-                                          !field.value &&
-                                            "text-muted-foreground"
-                                        )}
-                                      >
-                                        {field.value ? (
-                                          format(field.value, "PPP", {
-                                            locale: ru,
-                                          })
-                                        ) : (
-                                          <span>Укажите дату</span>
-                                        )}
-                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                      </Button>
-                                    </FormControl>
-                                  </PopoverTrigger>
-                                  <PopoverContent
-                                    className="w-auto p-0"
-                                    align="start"
-                                  >
-                                    <Calendar
-                                      mode="single"
-                                      selected={field.value}
-                                      onSelect={field.onChange}
-                                      disabled={(date) =>
-                                        date > new Date() ||
-                                        date < new Date("1900-01-01")
-                                      }
-                                      initialFocus
-                                      captionLayout="dropdown"
-                                    />
-                                  </PopoverContent>
-                                </Popover>
-                                <FormMessage />
+                                <FormLabel>Фамилия</FormLabel>
+                                <Input id="last_name" placeholder="Иванов" value={field.value}
+                                       onChange={(e) => field.onChange(e.target.value)}/>
+                                <FormMessage/>
                               </FormItem>
                             )}
                           />
-                        </form>
-                      </Form>
-                    </div>
-                    <div className="flex flex-col justify-between gap-5 md:flex-row 2xl:flex-col">
-                      <div className="basis-1/2">
-                        <Label htmlFor="mail">Почта</Label>
-                        <Input
-                          id="mail"
-                          type="email"
-                          placeholder="pochta@mail.ru"
-                          autoComplete="email"
-                        />
-                        <p className="mt-1 text-sm text-gray-500">
-                          Введите свою почту
-                        </p>
+                        </div>
+                        <div className="basis-1/2">
+                          <FormField
+                            control={form.control}
+                            name="first_name"
+                            render={({field}) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>Имя</FormLabel>
+                                <Input id="first_name" placeholder="Иван" value={field.value}
+                                       onChange={(e) => field.onChange(e.target.value)}/>
+                                <FormMessage/>
+                              </FormItem>
+                            )}
+                          />
+                        </div>
                       </div>
-                      <div className="basis-1/2">
-                        <Label htmlFor="password">Пароль</Label>
-                        <Input
-                          id="password"
-                          type="password"
-                          placeholder="Придумайте пароль"
-                          autoComplete="new-password"
+                      <div className="flex flex-col justify-between gap-5 sm:flex-row">
+                        <FormField
+                          control={form.control}
+                          name="patronymic"
+                          render={({field}) => (
+                            <FormItem className="flex flex-col">
+                              <FormLabel>Отчество (при наличии)</FormLabel>
+                              <Input id="patronymic" placeholder="Иванович" value={field.value}
+                                     onChange={(e) => field.onChange(e.target.value)}/>
+                              <FormMessage/>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="birthday"
+                          render={({field}) => (
+                            <FormItem className="flex flex-col">
+                              <FormLabel>Дата рождения</FormLabel>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button
+                                      variant={"outline"}
+                                      className={cn(
+                                        "pl-3 text-left font-normal",
+                                        !field.value &&
+                                        "text-muted-foreground"
+                                      )}
+                                    >
+                                      {field.value ? (
+                                        format(field.value, "PPP", {
+                                          locale: ru,
+                                        })
+                                      ) : (
+                                        <span>Укажите дату</span>
+                                      )}
+                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50"/>
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                  className="w-auto p-0"
+                                  align="start"
+                                >
+                                  <Calendar
+                                    mode="single"
+                                    selected={field.value}
+                                    onSelect={field.onChange}
+                                    disabled={(date) =>
+                                      date > new Date() ||
+                                      date < new Date("1900-01-01")
+                                    }
+                                    initialFocus
+                                    captionLayout="dropdown"
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                              <FormMessage/>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="flex flex-col justify-between gap-5 md:flex-row 2xl:flex-col">
+                        <div className="basis-1/2">
+                          <FormField
+                            control={form.control}
+                            name="gender"
+                            render={({field}) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>Пол</FormLabel>
+                                <select id="gender" {...field}
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                  <option value="Male">Мужчина</option>
+                                  <option value="Female">Женщина</option>
+                                </select>
+                                <FormMessage/>
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="basis-1/2">
+                          <FormField
+                            control={form.control}
+                            name="email"
+                            render={({field}) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>Почта</FormLabel>
+                                <Input id="email" placeholder="pochta@mail.ru" value={field.value}
+                                       onChange={(e) => field.onChange(e.target.value)}/>
+                                <FormMessage/>
+                              </FormItem>
+                            )}
+                          />
+                          <p className="mt-1 text-sm text-gray-500">
+                            Введите свою почту
+                          </p>
+                        </div>
+                        <div className="basis-1/2">
+                          <FormField
+                            control={form.control}
+                            name="password"
+                            render={({field}) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>Пароль</FormLabel>
+                                <Input type="password" id="password" placeholder="Придумайте пароль" value={field.value}
+                                       onChange={(e) => field.onChange(e.target.value)}/>
+                                <FormMessage/>
+                              </FormItem>
+                            )}
+                          />
+                          <p className="text-sm text-gray-500">
+                            Минимум 8 символов
+                          </p>
+                        </div>
+                      </div>
+                      <div>
+                        <FormField
+                          control={form.control}
+                          name="confirm_password"
+                          render={({field}) => (
+                            <FormItem className="flex flex-col">
+                              <FormLabel>Пароль</FormLabel>
+                              <Input type="password" id="confirm_password" placeholder="Повторите пароль"
+                                     value={field.value}
+                                     onChange={(e) => field.onChange(e.target.value)}/>
+                              <FormMessage/>
+                            </FormItem>
+                          )}
                         />
                         <p className="text-sm text-gray-500">
                           Минимум 8 символов
                         </p>
                       </div>
                     </div>
-                    <div>
-                      <Label htmlFor="reppassword">Пароль</Label>
-                      <Input
-                        id="reppassword"
-                        type="password"
-                        placeholder="Повторите пароль"
-                        autoComplete="new-password"
-                      />
-                      <p className="text-sm text-gray-500">
-                        Минимум 8 символов
-                      </p>
-                    </div>
                   </div>
-                </div>
-              </form>
+                  <FormField
+                    control={form.control}
+                    name="terms"
+                    render={({field}) => (
+                      <FormItem className="flex items-center space-x-2 self-center pt-4 sm:self-start">
+                        <Input
+                          className={"peer size-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"}
+                          type="checkbox"
+                          id="terms"
+                          onChange={e => field.onChange(!field.value)}
+                        />
+                        <FormLabel
+                          className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Согласен с обработкой персональных данных
+                        </FormLabel>
+                        {/*<FormMessage/>*/}
+                      </FormItem>
+                    )}
+                  />
+                  <Button className={`mt-4 w-full`}>Продолжить</Button>
+                </form>
+              </Form>
             </CardContent>
           </Card>
-          <div className="flex items-center space-x-2 self-center pt-4 sm:self-start">
-            <Checkbox id="terms" />
-            <label
-              htmlFor="terms"
-              className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Согласен с обработкой персональных данных
-            </label>
-          </div>
-          <Button className="mt-4 w-full">Продолжить</Button>
           <p className="text-sm text-gray-500 xl:hidden">
             Уже есть акаунт?{" "}
             <Link href="/auth" className="font-bold">
@@ -227,7 +317,8 @@ export default function IndexPage() {
         </div>
       </div>
       <div className="hidden place-content-center bg-gray-200 dark:bg-slate-950 xl:grid">
-        <Button variant="secondary" className="bg-slate-400 dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800" asChild>
+        <Button variant="secondary"
+                className="bg-slate-400 dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800" asChild>
           <Link href="/auth/login" className="w-60 text-white">
             Войти
           </Link>

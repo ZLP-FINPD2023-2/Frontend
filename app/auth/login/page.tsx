@@ -2,30 +2,48 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import {zodResolver} from "@hookform/resolvers/zod"
+import {FieldValues, SubmitHandler, useForm} from "react-hook-form"
 import * as z from "zod"
 
-import { cn } from "@/lib/utils"
-import { Button, buttonVariants } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import {cn} from "@/lib/utils"
+import {Button, buttonVariants} from "@/components/ui/button"
+import {Card, CardContent} from "@/components/ui/card"
+import {Input} from "@/components/ui/input"
+import {Label} from "@/components/ui/label"
+import ky from "ky";
+import kyInstance from "@/utils/api";
+import {useRouter} from "next/navigation";
 
 export default function IndexPage() {
+  const router = useRouter()
+
   const schema = z.object({
-    mail: z.string().email("Введите корректный адрес электронной почты"),
+    email: z.string().email("Введите корректный адрес электронной почты"),
     password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
   });
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const {register, handleSubmit, formState: {errors}} = useForm({
     resolver: zodResolver(schema)
   });
+
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    try {
+      const response = await kyInstance.post('auth/login', {
+        json: data,
+      }).json();
+      localStorage.setItem('token', response.token);
+      router.push('/');
+    } catch (error) {
+      console.error('Произошла ошибка:', error);
+    }
+  };
 
   return (
     <section className="grid h-[90vh] grid-flow-col xl:grid-cols-2">
       <div className="hidden place-content-center bg-gray-200 dark:bg-slate-950 xl:grid">
-        <Button variant="secondary" className="bg-slate-400 dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800" asChild>
+        <Button variant="secondary"
+                className="bg-slate-400 dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800" asChild>
           <Link href="/auth/reg" className="w-60 text-white">
             Зарегистрироваться
           </Link>
@@ -38,19 +56,19 @@ export default function IndexPage() {
           </h1>
           <Card className="mt-5 w-full py-6 pb-0">
             <CardContent>
-              <form>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid w-full items-center gap-4">
                   <div className="flex flex-col gap-1 space-y-1.5">
                     <div className="flex flex-col gap-5">
                       <div className="basis-1/2">
-                        <Label htmlFor="mail">Почта</Label>
+                        <Label htmlFor="email">Почта</Label>
                         <Input
-                          id="mail"
-                          type="email"
-                          placeholder="pochta@mail.ru"
-                          autoComplete="email"
-                          {...register("mail")}
-                          />
+                          id="email"
+                          type="eemail"
+                          placeholder="pochta@email.ru"
+                          autoComplete="eemail"
+                          {...register("email")}
+                        />
                         <p className="mt-1 text-sm text-gray-500">
                           Введите свою почту
                         </p>

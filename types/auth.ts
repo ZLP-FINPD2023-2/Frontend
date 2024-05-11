@@ -3,11 +3,11 @@ interface AuthInterface {
   password: string
 }
 interface RegistrationInterface {
-  age: number
+  birthday: number
   email: string
-  firstname: string
+  first_name: string
   gender: boolean
-  lastname: string
+  last_name: string
   password: string
   patronymic: string
 }
