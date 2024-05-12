@@ -6,12 +6,10 @@ import {zodResolver} from "@hookform/resolvers/zod"
 import {FieldValues, SubmitHandler, useForm} from "react-hook-form"
 import * as z from "zod"
 
-import {cn} from "@/lib/utils"
-import {Button, buttonVariants} from "@/components/ui/button"
+import {Button} from "@/components/ui/button"
 import {Card, CardContent} from "@/components/ui/card"
 import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
-import ky from "ky";
 import kyInstance from "@/utils/api";
 import {useRouter} from "next/navigation";
 
@@ -29,7 +27,7 @@ export default function IndexPage() {
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
-      const response = await kyInstance.post('auth/login', {
+      const response: AuthResponseInterface = await kyInstance.post('auth/login', {
         json: data,
       }).json();
       localStorage.setItem('token', response.token);
@@ -43,7 +41,7 @@ export default function IndexPage() {
     <section className="grid h-[90vh] grid-flow-col xl:grid-cols-2">
       <div className="hidden place-content-center bg-gray-200 dark:bg-slate-950 xl:grid">
         <Button variant="secondary"
-                className="bg-slate-400 dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800" asChild>
+                className="bg-slate-400 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800" asChild>
           <Link href="/auth/reg" className="w-60 text-white">
             Зарегистрироваться
           </Link>
