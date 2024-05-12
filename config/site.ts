@@ -6,10 +6,6 @@ export const siteConfig = {
     "Финансовое приложение",
   mainNav: [
     {
-      title: "Войти",
-      href: "/auth/login",
-    },
-    {
       title: "Цели",
       href: "/goals",
     },

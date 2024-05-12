@@ -46,6 +46,7 @@ import {
 import * as z from "zod"
 import {toast} from "@/components/ui/use-toast"
 import InputDate from "@/components/input-date"
+import isAuth from "@/app/auth/isAuth/isAuth";
 
 const finTools = [
   {
@@ -76,7 +77,7 @@ const FormSchema = z.object({
   }),
 })
 
-export default function Fin_tools() {
+const Fin_tools = () => {
   const form = useForm()
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -171,3 +172,5 @@ export default function Fin_tools() {
     </div>
   )
 }
+
+export default isAuth(Fin_tools);
