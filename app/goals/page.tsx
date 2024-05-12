@@ -66,7 +66,6 @@ export default function Goals() {
   }
   const updateGoal: SubmitHandler<FieldValues> = async (data) => {
     try {
-      console.log(data)
       const formDataToSend = {
         target_amount: data.target_amount,
         title: data.title,

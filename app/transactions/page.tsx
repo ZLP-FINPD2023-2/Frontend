@@ -54,7 +54,6 @@ export default function Transaction() {
         title: data.title,
         amount: data.amount,
       };
-      console.log(formDataToSend)
       await kyInstance.patch(`trx/${data.id}`, {
         json: formDataToSend,
       }).json();
