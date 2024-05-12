@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Form, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
@@ -18,7 +18,7 @@ const schema = z.object({
   id: z.number().optional(),
   title: z.string({
     required_error: "Название обязательно",
-  }),
+  }).min(1, {message: "Название должно содержать хотя бы один символ"})
 });
 
 interface BudgetFormProps {
@@ -40,7 +40,7 @@ const BudgetForm = ({onSubmit, defaultValues}: BudgetFormProps) => {
       defaultValues: {
         id: Number(defaultValues?.id) || 0,
         title: defaultValues?.title || "",
-        goal: defaultValues?.goal.toString() || "-1",
+        goal: defaultValues?.goal.toString() || (data && data.length > 0 ? data[0].id.toString() : ""),
       }
     }
   )
@@ -52,7 +52,7 @@ const BudgetForm = ({onSubmit, defaultValues}: BudgetFormProps) => {
         className="basis-1/2"
       >
         <DialogHeader>
-          <DialogTitle>Цель</DialogTitle>
+          <DialogTitle>Бюджет</DialogTitle>
         </DialogHeader>
         <FormField
           control={form.control}
@@ -72,14 +72,16 @@ const BudgetForm = ({onSubmit, defaultValues}: BudgetFormProps) => {
           render={({field}) => (
             <FormItem className="flex flex-col">
               <FormLabel>Цель</FormLabel>
-              <select id="goal" {...field}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {data ? data.map((goal) => (
-                    <option key={goal.id} value={goal.id}>{goal.title}</option>
-                  ))
-                  : <option value="-1">Нет целей</option>}
-              </select>
+              <Select onValueChange={field.onChange} {...field}>
+                <SelectTrigger>
+                  <SelectValue placeholder="выберете цель"/>
+                </SelectTrigger>
+                <SelectContent>
+                  {data?.map((goal) => (
+                    <SelectItem key={goal.id} value={goal.id.toString()}>{goal.title}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage/>
             </FormItem>
           )}

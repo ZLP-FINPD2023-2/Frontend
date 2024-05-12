@@ -76,6 +76,7 @@ export default function Budgets() {
         title: data.title,
         goal_id: Number(data.goal),
       };
+      console.log(formDataToSend);
       await kyInstance.post('budget', {
         json: formDataToSend,
       });
@@ -135,7 +136,9 @@ export default function Budgets() {
                 </TableRow>
               ))
               :
-              <span className="">Бюджетов пока нет</span>
+              <TableRow>
+                <TableCell colSpan={6} className="text-center">Бюджетов пока нет</TableCell>
+              </TableRow>
             }
           </TableBody>
         </Table>
