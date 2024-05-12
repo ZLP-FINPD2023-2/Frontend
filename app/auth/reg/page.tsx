@@ -314,7 +314,7 @@ export default function IndexPage() {
           </Card>
           <p className="text-sm text-gray-500 xl:hidden">
             Уже есть акаунт?{" "}
-            <Link href="/auth" className="font-bold">
+            <Link href="/auth/login" className="font-bold">
               Войти
             </Link>
           </p>
