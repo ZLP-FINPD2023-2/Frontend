@@ -50,13 +50,13 @@ export default function Transaction() {
   }
   const updateTransaction: SubmitHandler<FieldValues> = async (data) => {
     try {
-      let newDate = `${('0' + data.date.getDate()).slice(-2)}-${('0' + (data.date.getMonth() + 1)).slice(-2)}-${data.date.getFullYear()}`
+      // let newDate = `${('0' + data.date.getDate()).slice(-2)}-${('0' + (data.date.getMonth() + 1)).slice(-2)}-${data.date.getFullYear()}`
       const formDataToSend = {
         title: data.title,
         amount: data.amount,
-        date: newDate,
-        budget_from: Number(data.budget_from),
-        budget_to: Number(data.budget_to),
+        // date: newDate,
+        // budget_from: Number(data.budget_from),
+        // budget_to: Number(data.budget_to),
       };
       console.log(formDataToSend)
       await kyInstance.patch(`trx/${data.id}`, {
@@ -116,37 +116,42 @@ export default function Transaction() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((transaction) => (
-              <TableRow>
-                <TableCell>{transaction.id}</TableCell>
-                <TableCell>{transaction.title}</TableCell>
-                <TableCell
-                  className={transaction.amount > 0 ? `text-green-500` : "text-red-500"}>{transaction.amount > 0 ? `+${transaction.amount}Р` : `${transaction.amount}Р`}</TableCell>
-                <TableCell>{transaction.date}</TableCell>
-                <TableCell>{transaction.budget_from}</TableCell>
-                <TableCell>{transaction.budget_to}</TableCell>
+            {data ? data.map((transaction) => (
+                <TableRow>
+                  <TableCell>{transaction.id}</TableCell>
+                  <TableCell>{transaction.title}</TableCell>
+                  <TableCell
+                    className={transaction.amount > 0 ? `text-green-500` : "text-red-500"}>{transaction.amount > 0 ? `+${transaction.amount}Р` : `${transaction.amount}Р`}</TableCell>
+                  <TableCell>{transaction.date}</TableCell>
+                  <TableCell>{transaction.budget_from}</TableCell>
+                  <TableCell>{transaction.budget_to}</TableCell>
 
-                <TableCell className="flex gap-3">
-                  <Dialog>
-                    <DialogTrigger>
-                      <Pencil className="size-5 hover:text-gray-700"/>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <TransactionForm onSubmit={updateTransaction}
-                                       defaultValues={{
-                                         amount: transaction.amount,
-                                         title: transaction.title,
-                                         id: transaction.id,
-                                         date: transaction.date,
-                                         budget_from: transaction.budget_from,
-                                         budget_to: transaction.budget_to
-                                       }}/>
-                    </DialogContent>
-                  </Dialog>
-                  <Trash2 onClick={() => deleteTransaction(transaction.id)} className="size-5 hover:text-gray-700"/>
-                </TableCell>
+                  <TableCell className="flex gap-3">
+                    <Dialog>
+                      <DialogTrigger>
+                        <Pencil className="size-5 hover:text-gray-700"/>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <TransactionForm onSubmit={updateTransaction}
+                                         defaultValues={{
+                                           amount: transaction.amount,
+                                           title: transaction.title,
+                                           id: transaction.id,
+                                           date: transaction.date,
+                                           budget_from: transaction.budget_from,
+                                           budget_to: transaction.budget_to
+                                         }}/>
+                      </DialogContent>
+                    </Dialog>
+                    <Trash2 onClick={() => deleteTransaction(transaction.id)} className="size-5 hover:text-gray-700"/>
+                  </TableCell>
+                </TableRow>
+              ))
+              :
+              <TableRow>
+                <TableCell colSpan={8} className="text-center">Транзакций пока нет</TableCell>
               </TableRow>
-            ))}
+            }
           </TableBody>
         </Table>
       </Card>

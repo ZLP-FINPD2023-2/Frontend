@@ -9,11 +9,12 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {cn} from "@/lib/utils";
 import {format} from "date-fns";
-import {ru} from "date-fns/locale";
+import {eu, ru} from "date-fns/locale";
 import {CalendarIcon} from "lucide-react";
 import {Calendar} from "@/components/ui/calendar";
 import kyInstance from "@/utils/api";
 import {useQuery} from "@tanstack/react-query";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
 const schema = z.object({
   id: z.number().min(0, {message: "ID должен быть положительным числом"}),
@@ -45,10 +46,10 @@ const TransactionForm = ({onSubmit, defaultValues}: TransactionFormProps) => {
       defaultValues: {
         id: Number(defaultValues?.id) || 0,
         title: defaultValues?.title || "",
-        date: defaultValues?.date ? new Date(defaultValues.date) : new Date(),
+        date: new Date(),
         amount: Number(defaultValues?.amount) || 0,
-        budget_from: defaultValues?.budget_from.toString() || "",
-        budget_to: defaultValues?.budget_to.toString() || "",
+        budget_from: defaultValues?.budget_from.toString() || (data && data.length > 0 ? data[0].id.toString() : ""),
+        budget_to: defaultValues?.budget_to.toString() || (data && data.length > 0 ? data[0].id.toString() : ""),
       }
     }
   )
@@ -91,14 +92,16 @@ const TransactionForm = ({onSubmit, defaultValues}: TransactionFormProps) => {
           render={({field}) => (
             <FormItem className="flex flex-col">
               <FormLabel>Бюджет списания</FormLabel>
-              <select id="budget_from" {...field}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {data ? data.map((budget) => (
-                    <option key={budget.id} value={budget.id}>{budget.title}</option>
-                  ))
-                  : <option value="-1">Нет бюджетов</option>}
-              </select>
+              <Select onValueChange={field.onChange} {...field}>
+                <SelectTrigger>
+                  <SelectValue placeholder="выберете бюджет списания"/>
+                </SelectTrigger>
+                <SelectContent>
+                  {data?.map((budget) => (
+                    <SelectItem key={budget.id} value={budget.id.toString()}>{budget.title}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage/>
             </FormItem>
           )}
@@ -109,14 +112,16 @@ const TransactionForm = ({onSubmit, defaultValues}: TransactionFormProps) => {
           render={({field}) => (
             <FormItem className="flex flex-col">
               <FormLabel>Бюджет поступления</FormLabel>
-              <select id="budget_from" {...field}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {data ? data.map((budget) => (
-                    <option key={budget.id} value={budget.id}>{budget.title}</option>
-                  ))
-                  : <option value="-1">Нет бюджетов</option>}
-              </select>
+              <Select onValueChange={field.onChange} {...field}>
+                <SelectTrigger>
+                  <SelectValue placeholder="выберете бюджет поступления"/>
+                </SelectTrigger>
+                <SelectContent>
+                  {data?.map((budget) => (
+                    <SelectItem key={budget.id} value={budget.id.toString()}>{budget.title}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage/>
             </FormItem>
           )}
