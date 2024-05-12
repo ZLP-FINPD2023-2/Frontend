@@ -14,6 +14,7 @@ import {FieldValues, SubmitHandler} from "react-hook-form";
 import kyInstance from "@/utils/api";
 import {useMutation, useQuery, useQueryClient,} from '@tanstack/react-query'
 import GoalForm from "@/components/goal-form";
+import isAuth from "@/app/auth/isAuth/isAuth";
 
 
 const pages = [
@@ -38,7 +39,7 @@ const fetchGoals = (): Promise<GoalInterface[]> =>
   kyInstance.get('goal').then((response) => response.json())
 
 
-export default function Goals() {
+const Goals = () => {
   const queryClient = useQueryClient()
   const [extended, setExtended] = useState(false);
   const {isPending, isError, data, error} = useQuery({
@@ -163,3 +164,5 @@ export default function Goals() {
     </div>
   )
 }
+
+export default isAuth(Goals);

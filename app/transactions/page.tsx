@@ -17,12 +17,13 @@ import * as React from "react";
 import {FieldValues, SubmitHandler} from "react-hook-form";
 import {Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog";
 import TransactionForm from "@/components/transactions-form";
+import isAuth from "@/app/auth/isAuth/isAuth";
 
 
 const fetchTransactions = (): Promise<TransactionInterface[]> =>
   kyInstance.get('trx').then((response) => response.json())
 
-export default function Transaction() {
+const Transaction = () => {
   const queryClient = useQueryClient()
   const {isPending, isError, data, error} = useQuery({
     queryKey: ['transactions'],
@@ -153,3 +154,5 @@ export default function Transaction() {
     </div>
   )
 }
+
+export default isAuth(Transaction);
