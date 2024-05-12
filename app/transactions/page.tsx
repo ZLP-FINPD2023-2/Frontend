@@ -50,13 +50,9 @@ export default function Transaction() {
   }
   const updateTransaction: SubmitHandler<FieldValues> = async (data) => {
     try {
-      // let newDate = `${('0' + data.date.getDate()).slice(-2)}-${('0' + (data.date.getMonth() + 1)).slice(-2)}-${data.date.getFullYear()}`
       const formDataToSend = {
         title: data.title,
         amount: data.amount,
-        // date: newDate,
-        // budget_from: Number(data.budget_from),
-        // budget_to: Number(data.budget_to),
       };
       console.log(formDataToSend)
       await kyInstance.patch(`trx/${data.id}`, {
