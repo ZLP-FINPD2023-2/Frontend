@@ -123,19 +123,21 @@ export default function Budgets() {
                   <TableCell className="flex gap-3">
                     <Dialog>
                       <DialogTrigger>
-                        <Pencil className="h-5 w-5 hover:text-gray-700"/>
+                        <Pencil className="size-5 hover:text-gray-700"/>
                       </DialogTrigger>
                       <DialogContent>
                         <BudgetForm onSubmit={updateBudget}
                                     defaultValues={{goal: budget.goal, title: budget.title, id: budget.id}}/>
                       </DialogContent>
                     </Dialog>
-                    <Trash2 onClick={() => deleteBudget(budget.id)} className="h-5 w-5 hover:text-gray-700"/>
+                    <Trash2 onClick={() => deleteBudget(budget.id)} className="size-5 hover:text-gray-700"/>
                   </TableCell>
                 </TableRow>
               ))
               :
-              <span className="">Бюджетов пока нет</span>
+              <TableRow>
+                <TableCell colSpan={6} className="text-center">Бюджетов пока нет</TableCell>
+              </TableRow>
             }
           </TableBody>
         </Table>

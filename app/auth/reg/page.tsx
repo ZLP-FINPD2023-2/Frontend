@@ -33,6 +33,7 @@ import {
 
 import {useRouter} from "next/navigation";
 import kyInstance from "@/utils/api";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
 const FormSchema = z.object({
   birthday: z.date({
@@ -183,7 +184,7 @@ export default function IndexPage() {
                                       ) : (
                                         <span>Укажите дату</span>
                                       )}
-                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50"/>
+                                      <CalendarIcon className="ml-auto size-4 opacity-50"/>
                                     </Button>
                                   </FormControl>
                                 </PopoverTrigger>
@@ -217,12 +218,15 @@ export default function IndexPage() {
                             render={({field}) => (
                               <FormItem className="flex flex-col">
                                 <FormLabel>Пол</FormLabel>
-                                <select id="gender" {...field}
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                  <option value="Male">Мужчина</option>
-                                  <option value="Female">Женщина</option>
-                                </select>
+                                <Select onValueChange={field.onChange} {...field}>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="выберете пол"/>
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                      <SelectItem  value={"Male"}>Мужчина</SelectItem>
+                                      <SelectItem  value={"Female"}>Женщина</SelectItem>
+                                  </SelectContent>
+                                </Select>
                                 <FormMessage/>
                               </FormItem>
                             )}
@@ -318,7 +322,7 @@ export default function IndexPage() {
       </div>
       <div className="hidden place-content-center bg-gray-200 dark:bg-slate-950 xl:grid">
         <Button variant="secondary"
-                className="bg-slate-400 dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800" asChild>
+                className="bg-slate-400 hover:bg-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800" asChild>
           <Link href="/auth/login" className="w-60 text-white">
             Войти
           </Link>

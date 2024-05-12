@@ -66,7 +66,6 @@ export default function Goals() {
   }
   const updateGoal: SubmitHandler<FieldValues> = async (data) => {
     try {
-      console.log(data)
       const formDataToSend = {
         target_amount: data.target_amount,
         title: data.title,
@@ -92,7 +91,7 @@ export default function Goals() {
   }
   return (
     <div className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
-      <div className="flex items-center justify-between w-full">
+      <div className="flex w-full items-center justify-between">
         <h1 className="text-2xl font-semibold">Цели</h1>
         <Dialog>
           <DialogTrigger>
@@ -103,8 +102,8 @@ export default function Goals() {
           </DialogContent>
         </Dialog>
       </div>
-      <div className="relative flex flex-col-reverse items-start md:flex-row gap-4">
-        <Card className="h-screen rounded-3xl p-6 flex-1 md:w-1/2 ">
+      <div className="relative flex flex-col-reverse items-start gap-4 md:flex-row">
+        <Card className="h-screen flex-1 rounded-3xl p-6 md:w-1/2 ">
           <Table>
             <TableHeader>
               <TableRow>
@@ -117,25 +116,29 @@ export default function Goals() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data?.map((goal) => (
-                <TableRow key={goal.id}>
-                  <TableCell>{goal.id}</TableCell>
-                  <TableCell>{goal.title}</TableCell>
-                  <TableCell>{goal.target_amount}</TableCell>
-                  <TableCell className="flex gap-3">
-                    <Dialog>
-                      <DialogTrigger>
-                        <Pencil className="h-5 w-5 hover:text-gray-700"/>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <GoalForm onSubmit={updateGoal}
-                                  defaultValues={{target_amount: goal.target_amount, title: goal.title, id: goal.id}}/>
-                      </DialogContent>
-                    </Dialog>
-                    < Trash2 className="h-5 w-5 hover:text-gray-700" onClick={() => deleteGoal(goal.id)}/>
-                  </TableCell>
+              {data ? data.map((goal) => (
+                  <TableRow key={goal.id}>
+                    <TableCell>{goal.id}</TableCell>
+                    <TableCell>{goal.title}</TableCell>
+                    <TableCell>{goal.target_amount}</TableCell>
+                    <TableCell className="flex gap-3">
+                      <Dialog>
+                        <DialogTrigger>
+                          <Pencil className="size-5 hover:text-gray-700"/>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <GoalForm onSubmit={updateGoal}
+                                    defaultValues={{target_amount: goal.target_amount, title: goal.title, id: goal.id}}/>
+                        </DialogContent>
+                      </Dialog>
+                      < Trash2 className="size-5 hover:text-gray-700" onClick={() => deleteGoal(goal.id)}/>
+                    </TableCell>
+                  </TableRow>
+                ))
+                :
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center">Целей пока нет</TableCell>
                 </TableRow>
-              ))
               }
             </TableBody>
           </Table>
