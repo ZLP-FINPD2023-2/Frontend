@@ -155,4 +155,4 @@ const Transaction = () => {
   )
 }
 
-export default isAuth(Transaction);
+export default Transaction;

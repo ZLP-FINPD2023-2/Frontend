@@ -146,4 +146,4 @@ const Budgets = () => {
     </div>
   )
 }
-export default isAuth(Budgets);
+export default Budgets;

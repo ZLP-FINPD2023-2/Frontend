@@ -16,6 +16,11 @@ import {useMutation, useQuery, useQueryClient,} from '@tanstack/react-query'
 import GoalForm from "@/components/goal-form";
 import isAuth from "@/app/auth/isAuth/isAuth";
 
+const mockData = [
+  { id: 1, title: 'Цель 1', target_amount: 100 },
+  { id: 2, title: 'Цель 2', target_amount: 200 },
+  { id: 3, title: 'Цель 3', target_amount: 300 },
+];
 
 const pages = [
   {
@@ -117,7 +122,7 @@ const Goals = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data ? data.map((goal) => (
+              {mockData.map((goal) => (
                   <TableRow key={goal.id}>
                     <TableCell>{goal.id}</TableCell>
                     <TableCell>{goal.title}</TableCell>
@@ -136,10 +141,10 @@ const Goals = () => {
                     </TableCell>
                   </TableRow>
                 ))
-                :
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center">Целей пока нет</TableCell>
-                </TableRow>
+                // :
+                // <TableRow>
+                //   <TableCell colSpan={6} className="text-center">Целей пока нет</TableCell>
+                // </TableRow>
               }
             </TableBody>
           </Table>
@@ -165,4 +170,4 @@ const Goals = () => {
   )
 }
 
-export default isAuth(Goals);
+export default Goals;
