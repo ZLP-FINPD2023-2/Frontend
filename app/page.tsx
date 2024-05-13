@@ -239,4 +239,4 @@ const IndexPage = () => {
   )
 }
 
-export default isAuth(IndexPage);
+export default IndexPage;

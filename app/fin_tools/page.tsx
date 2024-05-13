@@ -127,9 +127,9 @@ const Fin_tools = () => {
                 </SelectContent>
               </Select>
               <Label htmlFor="coefficient">Коэффициент прибыли</Label>
-              <Input id="coefficient" type="number" placeholder="1.15"/>
+              <Input id="coefficient" type="number" placeholder="1.15" required/>
               <InputDate form={form} field="start" label="Дата начала"/>
-              <InputDate form={form} field="end" label="Дата конца"/>
+              <InputDate form={form} field="end" label="Дата конца" futureDates={true}/>
               <Button variant="default" className="mt-4 w-full">Сохранить</Button>
             </DialogContent>
           </Dialog>
@@ -173,4 +173,4 @@ const Fin_tools = () => {
   )
 }
 
-export default isAuth(Fin_tools);
+export default Fin_tools;

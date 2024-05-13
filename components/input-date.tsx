@@ -22,15 +22,16 @@ import { ru } from 'date-fns/locale';
 import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon } from "lucide-react"
 import { Button } from './ui/button';
-import { format } from "date-fns"
+import { format, addYears } from "date-fns"
 
 interface DateInputProps {
     form: any
     field: string
     label: string;
+    futureDates?: boolean; 
   }
 
-  const InputDate: React.FC<DateInputProps> = ({ form, field, label }) => {
+  const InputDate: React.FC<DateInputProps> = ({ form, field, label,futureDates }) => {
     return (
         <FormField
                     control={form.control}
@@ -69,6 +70,7 @@ interface DateInputProps {
                               selected={field.value}
                               onSelect={field.onChange}
                               initialFocus
+                              disabled={(date: Date) => futureDates ? (date < new Date()) : (date > new Date())}
                             />
                           </PopoverContent>
                         </Popover>
