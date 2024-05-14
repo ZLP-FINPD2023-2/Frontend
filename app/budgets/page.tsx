@@ -109,10 +109,7 @@ const Budgets = () => {
             <TableRow>
               <TableHead className="w-[50px]">№</TableHead>
               <TableHead>Название</TableHead>
-              <TableHead>Сумма</TableHead>
-              <TableHead>Фин. инструменты</TableHead>
               <TableHead>Цель</TableHead>
-              <TableHead>Подробнее</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

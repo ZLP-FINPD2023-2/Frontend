@@ -105,10 +105,8 @@ const Transaction = () => {
               <TableHead>Название</TableHead>
               <TableHead>Сумма</TableHead>
               <TableHead>Дата</TableHead>
-              <TableHead>Частота</TableHead>
-              <TableHead>Длительность</TableHead>
-              <TableHead>Бюджет</TableHead>
-              <TableHead>Подробнее</TableHead>
+              <TableHead>Бюджет списания</TableHead>
+              <TableHead>Бюджет поступления</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -117,7 +115,7 @@ const Transaction = () => {
                   <TableCell>{transaction.id}</TableCell>
                   <TableCell>{transaction.title}</TableCell>
                   <TableCell
-                    className={transaction.amount > 0 ? `text-green-500` : "text-red-500"}>{transaction.amount > 0 ? `+${transaction.amount}Р` : `${transaction.amount}Р`}</TableCell>
+                    className={transaction.amount > 0 ? `text-green-500` : "text-red-500"}>{transaction.amount > 0 ? `+${transaction.amount} ₽` : `${transaction.amount} ₽`}</TableCell>
                   <TableCell>{transaction.date}</TableCell>
                   <TableCell>{transaction.budget_from}</TableCell>
                   <TableCell>{transaction.budget_to}</TableCell>
