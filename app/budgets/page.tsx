@@ -113,7 +113,7 @@ const Budgets = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data ? data.map((budget) => (
+            {data.length > 0 ? data.map((budget) => (
                 <TableRow key={budget.id}>
                   <TableCell>{budget.id}</TableCell>
                   <TableCell>{budget.title}</TableCell>
