@@ -22,7 +22,9 @@ const schema = z.object({
   date: z.date({
     required_error: "Дата транзакции обязательна",
   }),
-  amount: z.number().min(0, {message: "Сумма должна быть положительным числом"}),
+  amount: z.number({
+    required_error: "Сумма обязательна",
+  }),
   budget_from: z.string().min(0, {message: "Бюджет от должен быть положительным числом"}),
   budget_to: z.string().min(0, {message: "Бюджет до должен быть положительным числом"}),
 });
@@ -80,8 +82,10 @@ const TransactionForm = ({onSubmit, defaultValues}: TransactionFormProps) => {
           render={({field}) => (
             <FormItem className="flex flex-col">
               <FormLabel>Сумма</FormLabel>
-              <Input id="amount" placeholder="1 000 000" value={field.value}
-                     onChange={(e) => field.onChange(+e.target.value)}/>
+              <Input id="amount" placeholder="1 000 000" type="number"
+                     onChange={(e) => field.onChange(parseInt(e.target.value))}
+                     value={field.value}
+              />
               <FormMessage/>
             </FormItem>
           )}
