@@ -114,7 +114,7 @@ const Goals = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data ? data.map((goal) => (
+              {data.length ? data.map((goal) => (
                   <TableRow key={goal.id}>
                     <TableCell>{goal.id}</TableCell>
                     <TableCell>{goal.title}</TableCell>

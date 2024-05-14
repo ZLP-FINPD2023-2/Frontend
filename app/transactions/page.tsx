@@ -110,7 +110,7 @@ const Transaction = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data ? data.map((transaction) => (
+            {data.length ? data.map((transaction) => (
                 <TableRow>
                   <TableCell>{transaction.id}</TableCell>
                   <TableCell>{transaction.title}</TableCell>
