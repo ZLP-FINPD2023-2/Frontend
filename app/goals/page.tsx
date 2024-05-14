@@ -111,9 +111,6 @@ const Goals = () => {
                 <TableHead className="w-[50px]">№</TableHead>
                 <TableHead>Название</TableHead>
                 <TableHead>Сумма</TableHead>
-                <TableHead>Накоплено</TableHead>
-                <TableHead>Бюджеты</TableHead>
-                <TableHead>Подробнее</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
